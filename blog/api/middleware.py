@@ -7,8 +7,9 @@ class FeatureFlagMiddleware:
         self.cache_key = 'feature_flags'
 
     def __call__(self, request):
-        # Ensure feature flags are added to the request object
+        print("FeatureFlagMiddleware executed")  # Debugging log
         request.feature_flags = self._get_feature_flags()
+        print(f"Feature flags added to request: {request.feature_flags}")  # Debugging log
         response = self.get_response(request)
         return response
 
@@ -23,6 +24,6 @@ class FeatureFlagMiddleware:
         all_flags = FeatureFlag.objects.all()
         for flag in all_flags:
             flags[flag.name] = flag.is_active
-        # Cache the flags for 1 hour (you can adjust the timeout as needed)
-        cache.set(self.cache_key, flags, timeout=30)
+        cache.set(self.cache_key, flags, timeout=3600)  # Cache for 1 hour
         return flags
+

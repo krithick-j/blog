@@ -45,14 +45,14 @@ class ArticleViewSet(viewsets.ModelViewSet):
     
     def get_permissions(self):
         # Allow admins to create, update, delete; members can view only
-        print(f"Action: {self.request.method}")  # Debugging line
-        
         if self.request.method in ['POST', 'PUT', 'PATCH', 'GET', 'DELETE']:
             return [IsAdmin()]
         return [IsAuthenticated()]  # Allow authenticated users to view articles
 
     @feature_flag_enabled("manage_article_permissions")
     def perform_create(self, serializer):
+        print(f"Feature flag 'manage_article_permissions' is enabled.")  # Debugging line
+
         # Automatically set the authenticated user as the author
         serializer.save(author=self.request.user)
 
