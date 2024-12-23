@@ -20,4 +20,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),  # Admin route
     path('api/', include('api.urls')),  # Include the api app URLs
+    path('__debug__/', include('debug_toolbar.urls')),
 ]
