@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Article, Comment
+from .models import Article, Comment, FeatureFlag
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -8,7 +8,7 @@ class ArticleSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()  # Display username instead of ID
     class Meta:
         model = Article
-        fields = ['id', 'title', 'content', 'tags', 'author', 'created_at', 'updated_at']
+        fields = ['id', 'title', 'content', 'author', 'created_at', 'updated_at']
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -18,9 +18,6 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['id', 'article', 'user', 'content', 'created_at']
-
-
-
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,3 +39,17 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])  # Hash the password
         user.save()
         return user
+    
+class FeatureFlagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FeatureFlag
+        fields = ['id', 'name', 'is_active', 'actions']
+        
+    def validate_actions(self, value):
+        # Ensure the actions field is a dictionary with valid keys (create, update, delete)
+        if not isinstance(value, dict):
+            raise serializers.ValidationError("Actions must be a dictionary.")
+        for key in ['create', 'update', 'delete']:
+            if key not in value:
+                value[key] = False  # Default to False if not present
+        return value

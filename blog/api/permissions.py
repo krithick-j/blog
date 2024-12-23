@@ -1,14 +1,17 @@
 from rest_framework import permissions
-
-class IsAdmin(permissions.BasePermission):
+class   IsAdmin(permissions.BasePermission):
+    """
+    Permission for Admin users.
+    """
     def has_permission(self, request, view):
-        return request.user and request.user.is_staff  # Only staff (admin) can create/edit/delete articles
-
+        return request.user and request.user.role in ['admin', 'owner', 'super_admin']
 
 class IsMember(permissions.BasePermission):
+    """
+    Permission for Member users.
+    """
     def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated  # Only authenticated users (Members) can access articles
-
+        return request.user and request.user.role in ['member', 'admin', 'owner', 'super_admin']
 
 class IsOwnerOrAdmin(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
