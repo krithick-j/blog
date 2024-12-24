@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  web:
+    image: python:3.9-bullseye
+    container_name: blog_app
+    command: >
+      sh -c "
+      pip install --no-cache-dir django psycopg2-binary djangorestframework-simplejwt django-debug-toolbar dj-database-url &&
+      python blog/manage.py makemigrations &&
+      python blog/manage.py migrate &&
+      python blog/manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ../:/app
+    working_dir: /app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DJANGO_SETTINGS_MODULE: blog.settings
+      DATABASE_URL: postgres://postgres:password@db:5432/postgres
+
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+
+networks:
+  default:
+    driver: bridge
