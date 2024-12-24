@@ -66,7 +66,7 @@ To run the unit tests:
 2. Run the following command within the Docker container:
 
 ```bash
-docker exec -it blog_app python manage.py test
+docker exec -it blog_app python manage.py test api
 ```
 
 ---
