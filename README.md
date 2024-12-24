@@ -58,6 +58,9 @@ DATABASE_URL=postgres://postgres:password@db:5432/postgres
 
 3. Access the application at `http://localhost:8000`.
 4. Log in as the super admin at `http://localhost:8000/admin` to create additional admin users.
+5. Create members with roles by POST /users/ using admin account.
+6. If authentication is not provided, then role will be set to default as member.
+7. First member who creates the account will be become the owner.
 
 #### Local Development
 1. Install dependencies:
@@ -93,7 +96,8 @@ docker exec -it blog_app python manage.py test api
 Use the provided `Blog.postman_collection.json` file to test API endpoints:
 1. Open Postman.
 2. Import the `Blog.postman_collection.json` file.
-3. Run the requests to test the API.
+3. Use the Collection's environment variables for easy access.
+4. Run the requests to test the API.
 
 ### Debugging
 - To debug locally without Docker Compose, use `pdb` or any IDE with debugging capabilities.
