@@ -31,6 +31,12 @@ class User(AbstractUser):
         related_name='api_user_permissions',  # Custom related name to avoid clash
         blank=True
     )
+    
+class Tag(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
 class Article(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
@@ -39,12 +45,12 @@ class Article(models.Model):
         on_delete=models.CASCADE,
         related_name="articles"  # For reverse relationship
     )
+    tags = models.ManyToManyField(Tag, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
-
 
 class Comment(models.Model):
     article = models.ForeignKey(
@@ -66,15 +72,6 @@ class Comment(models.Model):
 class FeatureFlag(models.Model):
     name = models.CharField(max_length=100, unique=True)
     is_active = models.BooleanField(default=False)
-    actions = models.JSONField(default=dict)  # Store allowed actions for the flag
-
 
     def __str__(self):
-        return self.name
-    
-    def get_actions(self):
-        return self.actions if self.actions else {}
-
-    def is_action_enabled(self, action):
-        actions = self.get_actions()
-        return actions.get(action, False)  # Return True or False based on action
+        return f"{self.name} - {'Active' if self.is_active else 'Inactive'}"
