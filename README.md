@@ -1,34 +1,23 @@
 # Blog Application
 
-This application is a blogging platform built with Django and Django REST Framework (DRF). It includes role-based access control (RBAC) and integrates with a language model (LLM) such as OpenAI's GPT.
+## Project Setup
 
-## Features
-- Role-based access control (RBAC)
-- Article management
-- LLM integration for text processing
+This document provides detailed instructions to set up, run, and test the Blog application.
 
----
-
-## Setup Instructions
+### Features
+- Role-based access control (RBAC) for creating articles.
+- Feature flags for dynamically enabling/disabling application features.
+- Integration with OpenAI API for AI-powered features.
+- Django Admin interface for managing users and content.
 
 ### Prerequisites
-Ensure you have the following installed:
-- Docker
-- Docker Compose
+- Docker and Docker Compose
+- Python 3.9+
+- PostgreSQL
 
-### Clone the Repository
-```bash
-git clone <repository_url>
-cd blog
-```
-
-### Configure Environment Variables
-Create a `.env` file in the root directory and populate it with the required environment variables:
-
+### Environment Variables
+Create a `.env` file in the root directory with the following variables:
 ```env
-# Application settings
-DJANGO_SETTINGS_MODULE=blog.settings
-
 # Application Port
 PORT=8000
 
@@ -38,54 +27,92 @@ POSTGRES_PASSWORD=password
 POSTGRES_DB=databasename
 DATABASE_URL=postgres://username:password@db:5432/databasename
 
-# LLM integration
-OPENAI_API_KEY=<your_openai_api_key>
+# OpenAI API Key
+OPENAI_API_KEY=
 
-# Other settings
-SECRET_KEY=<your_secret_key>
+# Application Secret Key
+SECRET_KEY=
+
+# Debug Mode
 DEBUG=True
-ALLOWED_HOSTS=*
+
+# Allowed Hosts
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+# Database URL
+DATABASE_URL=postgres://postgres:password@db:5432/postgres
 ```
 
-### Start the Application with Docker
-Build and start the application using Docker Compose:
+### Setup Instructions
 
-```bash
-docker-compose up --build
-```
+#### Using Docker
+1. Build and start the application:
+   ```bash
+   docker-compose up --build
+   ```
 
-The application will be accessible at `http://localhost:8000`.
+2. Create a super admin user:
+   ```bash
+   docker exec -it blog_app python manage.py createsuperuser
+   ```
 
----
+3. Access the application at `http://localhost:8000`.
+4. Log in as the super admin at `http://localhost:8000/admin` to create additional admin users.
 
-## Running Tests
+#### Local Development
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-To run the unit tests:
+2. Apply migrations:
+   ```bash
+   python manage.py makemigrations
+   python manage.py migrate
+   ```
 
-1. Ensure the application is running.
-2. Run the following command within the Docker container:
+3. Run the development server:
+   ```bash
+   python manage.py runserver
+   ```
 
+4. For debugging:
+   - Install the Python Debugger (pdb):
+     ```bash
+     pip install pdbpp
+     ```
+   - Run the application without Docker Compose.
+
+### Running Tests
+Run the tests using Docker:
 ```bash
 docker exec -it blog_app python manage.py test api
 ```
 
----
+### Import Postman Collection
+Use the provided `Blog.postman_collection.json` file to test API endpoints:
+1. Open Postman.
+2. Import the `Blog.postman_collection.json` file.
+3. Run the requests to test the API.
 
-## LLM Integration Configuration
-
-The application integrates with an LLM such as OpenAI's GPT for advanced text processing. To configure this:
-
-1. Set the `OPENAI_API_KEY` environment variable in your `.env` file.
-2. Ensure the key is valid and has the necessary permissions for the OpenAI API.
-
-Example usage:
-- Text generation or processing endpoints in the API will automatically use the `OPENAI_API_KEY` for API calls.
-
----
-
-## Additional Notes
-- Always ensure your `.env` file is not committed to version control.
-- For production, set `DEBUG=False` and configure `ALLOWED_HOSTS` appropriately.
-- Import Blog.postman_collection.json to test
-
-For further information, refer to the documentation or contact the project maintainer.
+### Debugging
+- To debug locally without Docker Compose, use `pdb` or any IDE with debugging capabilities.
+- To disable SQL debugging, comment out the `LOGGING` configuration in `settings.py`:
+```python
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'level': 'DEBUG',
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django.db.backends': {
+#             'level': 'DEBUG',
+#             'handlers': ['console'],
+#         },
+#     },
+# }
+```
