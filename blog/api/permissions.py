@@ -4,7 +4,10 @@ class   IsAdmin(permissions.BasePermission):
     Permission for Admin users.
     """
     def has_permission(self, request, view):
-        return request.user and request.user.role in ['admin', 'owner', 'super_admin']
+        if request.user.is_authenticated:
+            return request.user.role in ['admin', 'owner', 'super_admin']
+        return False
+        # return request.user and request.user.role in ['admin', 'owner', 'super_admin']
 
 class IsMember(permissions.BasePermission):
     """
