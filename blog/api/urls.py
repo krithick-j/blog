@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from .views import ArticleViewSet, CommentViewSet, FeatureFlagViewSet, UserViewSet
+from .views import ArticleViewSet, CommentViewSet, FeatureFlagViewSet, LLMArticleViewSet, UserViewSet
 
 # Create a router for viewsets
 router = DefaultRouter()
@@ -10,6 +10,7 @@ router.register(r'users', UserViewSet)  # Registering the UserViewSet to handle 
 router.register(r'articles', ArticleViewSet)
 router.register(r'comments', CommentViewSet)
 router.register(r'feature-flags', FeatureFlagViewSet, basename='feature-flag')
+router.register(r'articles-llm', LLMArticleViewSet, basename='llm-article')
 
 urlpatterns = [
     # JWT Token endpoints for authentication

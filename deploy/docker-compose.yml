@@ -6,20 +6,20 @@ services:
     container_name: blog_app
     command: >
       sh -c "
-      pip install --no-cache-dir django psycopg2-binary djangorestframework-simplejwt django-debug-toolbar dj-database-url &&
-      python blog/manage.py makemigrations &&
-      python blog/manage.py migrate &&
-      python blog/manage.py runserver 0.0.0.0:8000"
+      pip install --no-cache-dir django psycopg2-binary djangorestframework-simplejwt django-debug-toolbar dj-database-url openai python-dotenv &&
+      python blog/manage.py runserver 0.0.0.0:${PORT}"
     volumes:
       - ../:/app
     working_dir: /app
     ports:
-      - "8000:8000"
+      - "${PORT}:${PORT}"
     depends_on:
       - db
     environment:
-      DJANGO_SETTINGS_MODULE: blog.settings
-      DATABASE_URL: postgres://postgres:password@db:5432/postgres
+      - DJANGO_SETTINGS_MODULE=blog.settings
+      - DATABASE_URL=${DATABASE_URL}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - PORT=${PORT}
 
   db:
     image: postgres:13
@@ -27,9 +27,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: postgres
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
 
 networks:
   default:
