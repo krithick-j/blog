@@ -4,7 +4,6 @@ from .models import Article, Comment, FeatureFlag, User
 from .serializers import ArticleSerializer, CommentSerializer, FeatureFlagSerializer, UserSerializer
 from .permissions import IsAdmin, IsMember
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .decorators import feature_flag_enabled
 
 from rest_framework import viewsets
 from .models import User
@@ -49,41 +48,13 @@ class ArticleViewSet(viewsets.ModelViewSet):
             return [IsAdmin()]
         return [IsAuthenticated()]  # Allow authenticated users to view articles
 
-    @feature_flag_enabled("manage_article_permissions")
+    # @feature_flag_enabled("manage_article_permissions") #feature flag work in progress
     def perform_create(self, serializer):
         print(f"Feature flag 'manage_article_permissions' is enabled.")  # Debugging line
 
         # Automatically set the authenticated user as the author
         serializer.save(author=self.request.user)
 
-
-# class ArticleViewSet(viewsets.ModelViewSet):
-#     queryset = Article.objects.all()
-#     serializer_class = ArticleSerializer
-
-#     def get_permissions(self):
-#         # Allow admins to create, update, delete; members can view only
-#         if self.request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
-#             return [IsAdmin()]
-#         return [IsAuthenticated()]  # Allow authenticated users to view articles
-
-#     def perform_create(self, serializer):
-#         # Automatically set the authenticated user as the author
-#         serializer.save(author=self.request.user)
-        
-#     @feature_flag_enabled("manage_article_permissions")
-#     def perform_update(self, serializer):
-#         # Logic for updating an article
-#         serializer.save()
-
-#     @feature_flag_enabled("manage_article_permissions")
-#     def perform_destroy(self, instance):
-#         # Logic for deleting an article
-#         instance.delete()
-
-#     def list(self, request, *args, **kwargs):
-#         # This action could be unrestricted or protected by feature flags
-#         return super().list(request, *args, **kwargs)
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
